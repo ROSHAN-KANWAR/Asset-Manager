@@ -1,0 +1,38 @@
+Create a complete, production-ready React Native (Expo) mobile app for an AI-powered Student Career Guidance System. The app must dynamically change its forms, language, and AI suggestions based on the user's choices.
+
+Follow these strict guidelines and structural requirements:
+
+1. MULTI-LANGUAGE SUPPORT (HINDI & ENGLISH):
+- On the very first launch, or at the top of the Welcome Screen, provide a clear Language Switcher toggle: [English] / [हिंदी].
+- All UI text, form labels, placeholders, and buttons must instantly change based on the selected language.
+- Pass the selected language preference to the AI API prompt so that the final career roadmap response is generated entirely in that chosen language (English or easy-to-understand Hindi).
+
+2. TECH STACK & UI:
+- Framework: React Native with Expo.
+- Styling: Modern, clean, and mobile-responsive UI using StyleSheet or NativeWind. Use a professional color palette (Deep Blue, Emerald Green, and Clean White/Light Gray).
+- Navigation: React Navigation for seamless transitions between screens.
+
+3. DYNAMIC WORKFLOW & SCREENS:
+
+SCREEN 1: Welcome & Education Level Selector
+- App Header/Splash: "Welcome to AI Career Coach 🚀" / "AI करियर कोच में आपका स्वागत है 🚀".
+- Educational Level Chips: [10th Student], [12th Student], [Graduate].
+
+SCREEN 2: Dynamic Academic Details Form (Conditional Rendering)
+- If '10th' is selected: Ask for 10th Marks/Percentage (%) and Favorite Subjects.
+- If '12th' is selected: Ask for 10th & 12th Marks, 12th Stream (Science-PCM/PCB, Commerce, Arts), and Favorite Subjects.
+- If 'Graduate' is selected: Ask for Graduation Degree Name (e.g., B.Tech, B.Com, B.Sc, B.A), Specialization, and CGPA/Percentage.
+
+SCREEN 3: Interest & Goals Checklist
+- Show an interactive checklist for interests (translated dynamically): [Tech & Coding], [Government Exams], [Management & Business], [Creative Arts & Design], [Banking & Finance], [Law & Judiciary].
+
+SCREEN 4: AI Career Dashboard (The Result)
+- When "Get AI Career Guidance" is clicked, show a loading animation ("AI is analyzing your profile..." / "AI आपकी प्रोफाइल का विश्लेषण कर रहा है...").
+- Make an API call to Google Gemini API (or OpenAI API) using Replit Secrets (`process.env.GEMINI_API_KEY`).
+- IMPORTANT: If the user selected Hindi, the AI prompt must strictly enforce: "Provide the output entirely in Hindi language, using easy-to-read formatting, bullet points, and clear headers."
+- Display the AI response in structured Cards: Best Career Options, Top Exams, and Skills to Learn.
+
+4. ERROR HANDLING & DATA VALIDATION:
+- Validate that marks are between 1 and 100. Show localized error messages based on the active language.
+
+Generate the complete code structure, handle language states dynamically, and configure the packages.

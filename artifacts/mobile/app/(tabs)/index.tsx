@@ -14,64 +14,31 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { type EducationLevel, useCareer } from "@/context/CareerContext";
+import { type EducationLevel, type Language, useCareer } from "@/context/CareerContext";
 import { useColors } from "@/hooks/useColors";
-
-interface LevelOption {
-  id: EducationLevel;
-  label: string;
-  sublabel: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  description: string;
-}
-
-const LEVELS: LevelOption[] = [
-  {
-    id: "10th",
-    label: "10th Student",
-    sublabel: "Class X",
-    icon: "school-outline",
-    description: "Explore streams, diplomas & early career skills",
-  },
-  {
-    id: "12th",
-    label: "12th Student",
-    sublabel: "Class XII",
-    icon: "book-outline",
-    description: "Discover degrees, entrance exams & career paths",
-  },
-  {
-    id: "graduate",
-    label: "Graduate",
-    sublabel: "Degree Holder",
-    icon: "ribbon-outline",
-    description: "Find jobs, higher education & govt exam roadmaps",
-  },
-];
+import { useTranslations } from "@/hooks/useTranslations";
 
 export default function WelcomeScreen() {
   const colors = useColors();
+  const t = useTranslations();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { educationLevel, setEducationLevel } = useCareer();
+  const { educationLevel, language, setEducationLevel, setLanguage } = useCareer();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
+  const slideAnim = useRef(new Animated.Value(24)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
     ]).start();
   }, [fadeAnim, slideAnim]);
+
+  function handleLang(lang: Language) {
+    Haptics.selectionAsync();
+    setLanguage(lang);
+  }
 
   function handleSelect(level: EducationLevel) {
     Haptics.selectionAsync();
@@ -86,23 +53,50 @@ export default function WelcomeScreen() {
 
   const topPadding = Platform.OS === "web" ? 67 : insets.top;
   const bottomPadding = Platform.OS === "web" ? 34 : insets.bottom;
+  const LEVELS = (["10th", "12th", "graduate"] as EducationLevel[]);
+  const ICONS: Record<EducationLevel, keyof typeof Ionicons.glyphMap> = {
+    "10th": "school-outline",
+    "12th": "book-outline",
+    graduate: "ribbon-outline",
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
         colors={["#0A2463", "#1B3B9C"]}
-        style={[styles.header, { paddingTop: topPadding + 24 }]}
+        style={[styles.header, { paddingTop: topPadding + 16 }]}
       >
+        {/* Language toggle */}
+        <View style={styles.langRow}>
+          {(["en", "hi"] as Language[]).map((lang) => (
+            <Pressable
+              key={lang}
+              onPress={() => handleLang(lang)}
+              style={[
+                styles.langBtn,
+                language === lang && styles.langBtnActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.langBtnText,
+                  { color: language === lang ? "#0A2463" : "rgba(255,255,255,0.75)" },
+                ]}
+              >
+                {t.lang[lang]}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
         <Animated.View
           style={[styles.headerContent, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}
         >
           <View style={styles.iconBadge}>
             <Ionicons name="flash" size={32} color="#10B981" />
           </View>
-          <Text style={styles.appTitle}>AI Career Coach</Text>
-          <Text style={styles.appSubtitle}>
-            Your AI-powered guide to the perfect career path
-          </Text>
+          <Text style={styles.appTitle}>{t.welcome.title}</Text>
+          <Text style={styles.appSubtitle}>{t.welcome.subtitle}</Text>
         </Animated.View>
       </LinearGradient>
 
@@ -113,15 +107,16 @@ export default function WelcomeScreen() {
       >
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
           <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>
-            SELECT YOUR CURRENT LEVEL
+            {t.welcome.selectLevel}
           </Text>
 
-          {LEVELS.map((level) => {
-            const selected = educationLevel === level.id;
+          {LEVELS.map((levelId) => {
+            const info = t.welcome.levels[levelId];
+            const selected = educationLevel === levelId;
             return (
               <Pressable
-                key={level.id}
-                onPress={() => handleSelect(level.id)}
+                key={levelId}
+                onPress={() => handleSelect(levelId)}
                 style={({ pressed }) => [
                   styles.levelCard,
                   {
@@ -139,20 +134,15 @@ export default function WelcomeScreen() {
                   ]}
                 >
                   <Ionicons
-                    name={level.icon}
+                    name={ICONS[levelId]}
                     size={24}
                     color={selected ? "#FFFFFF" : colors.primary}
                   />
                 </View>
                 <View style={styles.levelText}>
                   <View style={styles.levelTitleRow}>
-                    <Text
-                      style={[
-                        styles.levelLabel,
-                        { color: selected ? "#FFFFFF" : colors.text },
-                      ]}
-                    >
-                      {level.label}
+                    <Text style={[styles.levelLabel, { color: selected ? "#FFFFFF" : colors.text }]}>
+                      {info.label}
                     </Text>
                     <Text
                       style={[
@@ -160,7 +150,7 @@ export default function WelcomeScreen() {
                         { color: selected ? "rgba(255,255,255,0.7)" : colors.mutedForeground },
                       ]}
                     >
-                      {level.sublabel}
+                      {info.sublabel}
                     </Text>
                   </View>
                   <Text
@@ -169,12 +159,10 @@ export default function WelcomeScreen() {
                       { color: selected ? "rgba(255,255,255,0.8)" : colors.mutedForeground },
                     ]}
                   >
-                    {level.description}
+                    {info.description}
                   </Text>
                 </View>
-                {selected && (
-                  <Ionicons name="checkmark-circle" size={22} color="#10B981" />
-                )}
+                {selected && <Ionicons name="checkmark-circle" size={22} color="#10B981" />}
               </Pressable>
             );
           })}
@@ -184,11 +172,7 @@ export default function WelcomeScreen() {
       <View
         style={[
           styles.footer,
-          {
-            paddingBottom: bottomPadding + 16,
-            backgroundColor: colors.background,
-            borderTopColor: colors.border,
-          },
+          { paddingBottom: bottomPadding + 16, backgroundColor: colors.background, borderTopColor: colors.border },
         ]}
       >
         <Pressable
@@ -209,7 +193,7 @@ export default function WelcomeScreen() {
               { color: educationLevel ? "#FFFFFF" : colors.mutedForeground },
             ]}
           >
-            Continue
+            {t.welcome.continue}
           </Text>
           <Ionicons
             name="arrow-forward"
@@ -224,14 +208,29 @@ export default function WelcomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    paddingHorizontal: 24,
-    paddingBottom: 32,
+  header: { paddingHorizontal: 20, paddingBottom: 28 },
+  langRow: {
+    flexDirection: "row",
+    alignSelf: "flex-end",
+    gap: 6,
+    marginBottom: 16,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 20,
+    padding: 3,
   },
-  headerContent: {
-    alignItems: "center",
-    gap: 12,
+  langBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 17,
   },
+  langBtnActive: {
+    backgroundColor: "#FFFFFF",
+  },
+  langBtnText: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+  },
+  headerContent: { alignItems: "center", gap: 10 },
   iconBadge: {
     width: 64,
     height: 64,
@@ -239,30 +238,27 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 4,
+    marginBottom: 2,
   },
   appTitle: {
-    fontSize: 28,
+    fontSize: 27,
     fontFamily: "Inter_700Bold",
     color: "#FFFFFF",
-    letterSpacing: -0.5,
+    letterSpacing: -0.4,
   },
   appSubtitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: "Inter_400Regular",
     color: "rgba(255,255,255,0.75)",
     textAlign: "center",
-    lineHeight: 22,
+    lineHeight: 20,
   },
   scroll: { flex: 1 },
-  scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-  },
+  scrollContent: { paddingHorizontal: 20, paddingTop: 22 },
   sectionLabel: {
     fontSize: 11,
     fontFamily: "Inter_600SemiBold",
-    letterSpacing: 1.2,
+    letterSpacing: 1.1,
     marginBottom: 14,
   },
   levelCard: {
@@ -282,24 +278,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   levelText: { flex: 1, gap: 2 },
-  levelTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  levelLabel: {
-    fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
-  },
-  levelSublabel: {
-    fontSize: 12,
-    fontFamily: "Inter_400Regular",
-  },
-  levelDescription: {
-    fontSize: 13,
-    fontFamily: "Inter_400Regular",
-    lineHeight: 18,
-  },
+  levelTitleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  levelLabel: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
+  levelSublabel: { fontSize: 12, fontFamily: "Inter_400Regular" },
+  levelDescription: { fontSize: 13, fontFamily: "Inter_400Regular", lineHeight: 18 },
   footer: {
     position: "absolute",
     bottom: 0,
@@ -317,8 +299,5 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 16,
   },
-  continueBtnText: {
-    fontSize: 17,
-    fontFamily: "Inter_600SemiBold",
-  },
+  continueBtnText: { fontSize: 17, fontFamily: "Inter_600SemiBold" },
 });
