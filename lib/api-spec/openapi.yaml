@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: career
+    description: AI career guidance operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /career/guidance:
+    post:
+      operationId: getCareerGuidance
+      tags: [career]
+      summary: Get AI career guidance
+      description: Returns structured AI career guidance based on student profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CareerGuidanceRequest"
+      responses:
+        "200":
+          description: Career guidance response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CareerGuidanceResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: AI error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,51 @@ components:
           type: string
       required:
         - status
-
+    CareerGuidanceRequest:
+      type: object
+      properties:
+        educationLevel:
+          type: string
+          enum: [10th, 12th, graduate]
+        academicData:
+          type: object
+          additionalProperties: true
+        interests:
+          type: array
+          items:
+            type: string
+      required:
+        - educationLevel
+        - academicData
+        - interests
+    GuidanceSection:
+      type: object
+      properties:
+        title:
+          type: string
+        items:
+          type: array
+          items:
+            type: string
+      required:
+        - title
+        - items
+    CareerGuidanceResponse:
+      type: object
+      properties:
+        summary:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/GuidanceSection"
+      required:
+        - summary
+        - sections
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
