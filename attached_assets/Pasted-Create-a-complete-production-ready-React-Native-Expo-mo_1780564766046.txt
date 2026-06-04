@@ -1,0 +1,36 @@
+Create a complete, production-ready React Native (Expo) mobile app for an AI-powered Student Career Guidance System. The app must dynamically change its forms and AI suggestions based on the student's current educational level.
+
+Follow these strict guidelines and structural requirements:
+
+1. TECH STACK & UI:
+- Framework: React Native with Expo.
+- Styling: Modern, clean, and mobile-responsive UI using StyleSheet or NativeWind (Tailwind CSS). Use a professional color palette (Deep Blue, Emerald Green, and Clean White/Light Gray backgrounds).
+- Navigation: Use React Navigation for seamless transitions between screens.
+
+2. DYNAMIC WORKFLOW & SCREENS:
+
+SCREEN 1: Welcome & Education Level Selector
+- A beautiful splash/welcome message: "Welcome to AI Career Coach 🚀".
+- Ask the user to select their current education level using interactive selector buttons/chips: [10th Student], [12th Student], [Graduate].
+
+SCREEN 2: Dynamic Academic Details Form (Conditional Rendering)
+- If '10th Student' is selected: Ask for 10th Board Marks/Percentage (%) and Favorite Subjects.
+- If '12th Student' is selected: Ask for 10th Marks, 12th Marks, 12th Stream (Science-PCM/PCB, Commerce, Arts), and Favorite Subjects.
+- If 'Graduate' is selected: Ask for 10th Marks, 12th Stream & Marks, Graduation Degree Name (e.g., B.Tech, B.Com, B.Sc, B.A), Specialization, and CGPA/Percentage.
+
+SCREEN 3: Interest & Goals Checklist
+- Show an interactive checklist/chips for interests: [Tech & Coding], [Government Exams], [Management & Business], [Creative Arts & Design], [Banking & Finance], [Law & Judiciary].
+
+SCREEN 4: AI Career Dashboard (The Result)
+- When the user clicks "Get AI Career Guidance", show a beautiful loading animation ("AI is analyzing your profile...").
+- Make an API call to Google Gemini API (or OpenAI API) using a secure backend route or Replit Secrets environment variables (`process.env.GEMINI_API_KEY`).
+- Display the AI response in structured, readable Cards:
+  * For 10th: Next immediate course streams, diploma options, and early skill recommendations.
+  * For 12th: Best Bachelor degrees, top competitive entrance exams (CUET, JEE, CLAT, etc.), and 12th-level jobs.
+  * For Graduate: Career roadmaps, higher education (MBA, M.Tech, etc.), specific corporate job roles based on skills, and major graduate-level govt exams (UPSC, SSC CGL, Banking).
+
+3. ERROR HANDLING & DATA VALIDATION:
+- Add input validation (e.g., marks percentage must be between 1 and 100).
+- If the AI API fails, show a friendly error message with a "Retry" button.
+
+Generate the complete code structure, components, and configure the necessary packages.
