@@ -1,0 +1,31 @@
+Create an AI-powered Student Career Guidance System ("AI Career Coach") mobile app using React Native and Expo. 
+
+IMPORTANT: I want to build and download the final .apk file directly from this Replit environment. Automate the entire EAS Build configuration process and provide the downloadable APK link or build dashboard URL.
+
+Follow these strict feature and building guidelines:
+
+1. DYNAMIC FLOW & HINDI LANGUAGE:
+- Provide a Language Selector at the top: [English] / [हिंदी]. Everything should instantly translate based on selection.
+- Screen 1: Welcome message and current education level chips: [10th Student], [12th Student], [Graduate].
+- Screen 2 (Conditional Form): 
+  * If 10th: Ask for 10th Marks (%) and favorite subjects.
+  * If 12th: Ask for 10th & 12th Marks (%), 12th Stream (Science, Commerce, Arts).
+  * If Graduate: Ask for Graduation Degree, Specialization, and CGPA.
+- Screen 3: Checklist for interests: [Tech & Coding], [Government Exams (SSC, Steno, High Court)], [Management], [Creative Arts].
+- Screen 4: Beautiful Dashboard displaying AI-generated career options, exam eligibility, and skill roadmaps using Google Gemini/OpenAI API. If the user chooses Hindi, the AI must strictly output everything in beautiful, clear Hindi text.
+
+2. AUTOMATED APK BUILD CONFIGURATION (EAS BUILD):
+- Automatically create a production-ready 'eas.json' file in the root directory with the following exact config to ensure it generates an installable .apk file rather than an .aab file:
+  {
+    "cli": { "version": ">= 10.0.0" },
+    "build": {
+      "development": { "developmentClient": true, "distribution": "internal" },
+      "preview": { "distribution": "internal", "android": { "buildType": "apk" } },
+      "production": {}
+    }
+  }
+- Configure the 'app.json' file with a unique android package name identifier: "com.roshan.aicareercoach".
+
+3. FINAL OUTPUT REQUIRED:
+- Run the internal commands or guide me through the terminal buttons in Replit to trigger: 'eas build --platform android --profile preview'.
+- Handle or auto-generate the Android Keystore credentials in the cloud so that I can directly scan a QR code or click a download link in this Replit chat/console to install the .apk file on my Android mobile.
