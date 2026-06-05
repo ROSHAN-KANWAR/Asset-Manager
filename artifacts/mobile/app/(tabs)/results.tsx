@@ -38,15 +38,16 @@ const SECTION_ICONS_BY_INDEX: Array<keyof typeof Ionicons.glyphMap> = [
 ];
 
 const SECTION_ACCENT_COLORS = ["#0A2463", "#1B3B9C", "#10B981", "#059669"];
-
 const DOTS = ["", ".", "..", "..."];
 
 function LoadingView({
   colors,
+  name,
   analyzing,
   analyzingSubtitle,
 }: {
   colors: ReturnType<typeof useColors>;
+  name: string;
   analyzing: string;
   analyzingSubtitle: string;
 }) {
@@ -60,8 +61,8 @@ function LoadingView({
         Animated.timing(pulse, { toValue: 0.7, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
       ])
     ).start();
-    const timer = setInterval(() => setDotIndex((i) => (i + 1) % DOTS.length), 600);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setDotIndex((i) => (i + 1) % DOTS.length), 600);
+    return () => clearInterval(t);
   }, [pulse]);
 
   return (
@@ -73,15 +74,19 @@ function LoadingView({
       <Text style={[ls.title, { color: colors.text }]}>
         {analyzing}{DOTS[dotIndex]}
       </Text>
+      {name ? (
+        <Text style={[ls.name, { color: colors.primary }]}>{name}</Text>
+      ) : null}
       <Text style={[ls.subtitle, { color: colors.mutedForeground }]}>{analyzingSubtitle}</Text>
     </View>
   );
 }
 
 const ls = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, gap: 12 },
+  container: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, gap: 10 },
   iconWrap: { width: 88, height: 88, borderRadius: 28, alignItems: "center", justifyContent: "center" },
   title: { fontSize: 20, fontFamily: "Inter_700Bold", textAlign: "center", marginTop: 8 },
+  name: { fontSize: 18, fontFamily: "Inter_600SemiBold", textAlign: "center" },
   subtitle: { fontSize: 14, fontFamily: "Inter_400Regular", textAlign: "center", lineHeight: 20 },
 });
 
@@ -91,7 +96,7 @@ export default function ResultsScreen() {
   const rt = t.results;
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { educationLevel, academicData, interests, language, reset } = useCareer();
+  const { name, age, educationLevel, academicData, interests, language, reset } = useCareer();
 
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [data, setData] = useState<GuidanceResponse | null>(null);
@@ -107,16 +112,16 @@ export default function ResultsScreen() {
     try {
       const domain = process.env["EXPO_PUBLIC_DOMAIN"];
       const baseUrl = domain ? `https://${domain}` : "";
-      const response = await fetch(`${baseUrl}/api/career/guidance`, {
+      const res = await fetch(`${baseUrl}/api/career/guidance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ educationLevel, academicData, interests, language }),
+        body: JSON.stringify({ name, age, educationLevel, academicData, interests, language }),
       });
-      if (!response.ok) {
-        const err = (await response.json()) as { error?: string };
+      if (!res.ok) {
+        const err = (await res.json()) as { error?: string };
         throw new Error(err.error ?? "Request failed");
       }
-      const result = (await response.json()) as GuidanceResponse;
+      const result = (await res.json()) as GuidanceResponse;
       setData(result);
       setStatus("success");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -139,9 +144,7 @@ export default function ResultsScreen() {
     router.replace("/");
   }
 
-  const levelLabel = educationLevel
-    ? (rt.levelLabels[educationLevel] ?? educationLevel)
-    : "";
+  const levelLabel = educationLevel ? (rt.levelLabels[educationLevel] ?? educationLevel) : "";
 
   return (
     <View style={[s.container, { backgroundColor: colors.background }]}>
@@ -160,6 +163,7 @@ export default function ResultsScreen() {
       {status === "loading" && (
         <LoadingView
           colors={colors}
+          name={name}
           analyzing={rt.analyzing}
           analyzingSubtitle={rt.analyzingSubtitle}
         />
@@ -207,10 +211,14 @@ export default function ResultsScreen() {
               <Text style={s.summaryText}>{data.summary}</Text>
               <View style={s.summaryMeta}>
                 <View style={s.summaryTag}>
+                  <Ionicons name="person-outline" size={11} color="rgba(255,255,255,0.7)" />
+                  <Text style={s.summaryTagText}>{name}{age ? `, ${age}` : ""}</Text>
+                </View>
+                <View style={s.summaryTag}>
                   <Ionicons name="school-outline" size={11} color="rgba(255,255,255,0.7)" />
                   <Text style={s.summaryTagText}>{levelLabel}</Text>
                 </View>
-                {interests.slice(0, 2).map((id) => (
+                {interests.slice(0, 1).map((id) => (
                   <View key={id} style={s.summaryTag}>
                     <Text style={s.summaryTagText}>
                       {t.interests.items[id as keyof typeof t.interests.items]?.label ?? id}
@@ -248,15 +256,10 @@ export default function ResultsScreen() {
 }
 
 function SectionCard({
-  section,
-  colors,
-  icon,
-  accentColor,
+  section, colors, icon, accentColor,
 }: {
-  section: GuidanceSection;
-  colors: ReturnType<typeof useColors>;
-  icon: keyof typeof Ionicons.glyphMap;
-  accentColor: string;
+  section: GuidanceSection; colors: ReturnType<typeof useColors>;
+  icon: keyof typeof Ionicons.glyphMap; accentColor: string;
 }) {
   return (
     <View style={[s.sectionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>

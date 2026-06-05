@@ -4,9 +4,27 @@ const translations = {
   en: {
     lang: { en: "English", hi: "हिंदी" } as Record<Language, string>,
 
+    registration: {
+      title: "AI Career Coach",
+      subtitle: "Personalized career guidance powered by AI",
+      nameLabel: "Your Full Name",
+      namePlaceholder: "e.g. Ravi Kumar",
+      ageLabel: "Your Age",
+      agePlaceholder: "e.g. 17",
+      privacy:
+        "Your data is safe. This information is processed in real-time to personalize your roadmap and is not saved anywhere on any database or local storage.",
+      getStarted: "Get Started",
+      errors: {
+        nameRequired: "Please enter your name",
+        ageRequired: "Please enter your age",
+        ageInvalid: "Age must be a number between 10 and 60",
+      },
+    },
+
     welcome: {
       title: "AI Career Coach",
       subtitle: "Your AI-powered guide to the perfect career path",
+      greeting: "Hi {name}! Choose your level",
       selectLevel: "SELECT YOUR CURRENT LEVEL",
       continue: "Continue",
       levels: {
@@ -30,7 +48,7 @@ const translations = {
 
     academic: {
       title: "Academic Profile",
-      step: "Step 1 of 3",
+      step: "Step 2 of 4",
       next: "Next: Interests",
       marks10Label: "10th Board Marks / Percentage (%)",
       marks10Placeholder: "e.g. 85.5",
@@ -63,23 +81,38 @@ const translations = {
 
     interests: {
       title: "Your Interests",
-      step: "Step 2 of 3",
+      step: "Step 3 of 4",
       subtitle: "Select areas that excite you — choose as many as you like",
       hint: "Select at least one interest to continue",
       analyze: "Get AI Career Guidance",
       items: {
         "Tech & Coding": { label: "Tech & Coding", description: "Software, AI, data & web" },
-        "Government Exams": { label: "Government Exams", description: "UPSC, SSC, banking & more" },
-        "Management & Business": { label: "Management & Business", description: "MBA, startups & corporate" },
-        "Creative Arts & Design": { label: "Creative Arts & Design", description: "Art, design, media & fashion" },
-        "Banking & Finance": { label: "Banking & Finance", description: "Finance, investment & banking" },
-        "Law & Judiciary": { label: "Law & Judiciary", description: "Law, courts & legal services" },
+        "Government Exams": {
+          label: "Government Exams",
+          description: "SSC, Steno, High Court, UPSC",
+        },
+        "Management & Business": {
+          label: "Management & Business",
+          description: "MBA, startups & corporate",
+        },
+        "Creative Arts & Design": {
+          label: "Creative Arts & Design",
+          description: "Art, design, media & fashion",
+        },
+        "Banking & Finance": {
+          label: "Banking & Finance",
+          description: "Finance, investment & banking",
+        },
+        "Law & Judiciary": {
+          label: "Law & Judiciary",
+          description: "Law, courts & legal services",
+        },
       },
     },
 
     results: {
       title: "Career Guidance",
-      step: "Step 3 of 3",
+      step: "Step 4 of 4",
       analysisLabel: "AI ANALYSIS",
       analyzing: "Analyzing Your Profile",
       analyzingSubtitle: "Our AI is crafting personalized guidance just for you",
@@ -99,9 +132,27 @@ const translations = {
   hi: {
     lang: { en: "English", hi: "हिंदी" } as Record<Language, string>,
 
+    registration: {
+      title: "AI करियर कोच",
+      subtitle: "AI द्वारा संचालित व्यक्तिगत करियर मार्गदर्शन",
+      nameLabel: "आपका पूरा नाम",
+      namePlaceholder: "जैसे रवि कुमार",
+      ageLabel: "आपकी आयु",
+      agePlaceholder: "जैसे 17",
+      privacy:
+        "आपका डेटा सुरक्षित है। यह जानकारी केवल आपके रोडमैप को वैयक्तिकृत करने के लिए रियल-टाइम में प्रोसेस की जाती है और किसी भी डेटाबेस या लोकल स्टोरेज में सेव नहीं होती।",
+      getStarted: "शुरू करें",
+      errors: {
+        nameRequired: "कृपया अपना नाम दर्ज करें",
+        ageRequired: "कृपया अपनी आयु दर्ज करें",
+        ageInvalid: "आयु 10 से 60 के बीच होनी चाहिए",
+      },
+    },
+
     welcome: {
       title: "AI करियर कोच",
       subtitle: "आपके सही करियर के लिए AI-संचालित मार्गदर्शक",
+      greeting: "{name} जी! अपना स्तर चुनें",
       selectLevel: "अपना वर्तमान स्तर चुनें",
       continue: "आगे बढ़ें",
       levels: {
@@ -125,7 +176,7 @@ const translations = {
 
     academic: {
       title: "शैक्षणिक प्रोफाइल",
-      step: "चरण 1 / 3",
+      step: "चरण 2 / 4",
       next: "रुचियां: आगे",
       marks10Label: "10वीं के अंक / प्रतिशत (%)",
       marks10Placeholder: "जैसे 85.5",
@@ -158,23 +209,38 @@ const translations = {
 
     interests: {
       title: "आपकी रुचियां",
-      step: "चरण 2 / 3",
+      step: "चरण 3 / 4",
       subtitle: "जो क्षेत्र आपको पसंद हैं उन्हें चुनें — जितने चाहें उतने",
       hint: "जारी रखने के लिए कम से कम एक रुचि चुनें",
       analyze: "AI करियर मार्गदर्शन पाएं",
       items: {
         "Tech & Coding": { label: "तकनीक और कोडिंग", description: "सॉफ्टवेयर, AI, डेटा और वेब" },
-        "Government Exams": { label: "सरकारी परीक्षाएं", description: "UPSC, SSC, बैंकिंग और अधिक" },
-        "Management & Business": { label: "प्रबंधन और व्यवसाय", description: "MBA, स्टार्टअप और कॉर्पोरेट" },
-        "Creative Arts & Design": { label: "कला और डिज़ाइन", description: "कला, डिज़ाइन, मीडिया और फैशन" },
-        "Banking & Finance": { label: "बैंकिंग और वित्त", description: "वित्त, निवेश और बैंकिंग" },
-        "Law & Judiciary": { label: "कानून और न्यायपालिका", description: "कानून, अदालतें और कानूनी सेवाएं" },
+        "Government Exams": {
+          label: "सरकारी परीक्षाएं",
+          description: "SSC, Steno, हाई कोर्ट, UPSC",
+        },
+        "Management & Business": {
+          label: "प्रबंधन और व्यवसाय",
+          description: "MBA, स्टार्टअप और कॉर्पोरेट",
+        },
+        "Creative Arts & Design": {
+          label: "कला और डिज़ाइन",
+          description: "कला, डिज़ाइन, मीडिया और फैशन",
+        },
+        "Banking & Finance": {
+          label: "बैंकिंग और वित्त",
+          description: "वित्त, निवेश और बैंकिंग",
+        },
+        "Law & Judiciary": {
+          label: "कानून और न्यायपालिका",
+          description: "कानून, अदालतें और कानूनी सेवाएं",
+        },
       },
     },
 
     results: {
       title: "करियर मार्गदर्शन",
-      step: "चरण 3 / 3",
+      step: "चरण 4 / 4",
       analysisLabel: "AI विश्लेषण",
       analyzing: "आपकी प्रोफाइल का विश्लेषण हो रहा है",
       analyzingSubtitle: "हमारा AI आपके लिए व्यक्तिगत मार्गदर्शन तैयार कर रहा है",

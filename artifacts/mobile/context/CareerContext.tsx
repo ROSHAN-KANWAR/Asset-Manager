@@ -1,10 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 import { type Language } from "@/constants/translations";
 
 export type { Language };
-
 export type EducationLevel = "10th" | "12th" | "graduate";
 
 export interface AcademicData {
@@ -19,6 +17,8 @@ export interface AcademicData {
 
 interface CareerState {
   language: Language;
+  name: string;
+  age: string;
   educationLevel: EducationLevel | null;
   academicData: AcademicData;
   interests: string[];
@@ -26,6 +26,7 @@ interface CareerState {
 
 interface CareerContextType extends CareerState {
   setLanguage: (lang: Language) => void;
+  setProfile: (name: string, age: string) => void;
   setEducationLevel: (level: EducationLevel) => void;
   setAcademicData: (data: AcademicData) => void;
   setInterests: (interests: string[]) => void;
@@ -34,6 +35,8 @@ interface CareerContextType extends CareerState {
 
 const defaultState: CareerState = {
   language: "en",
+  name: "",
+  age: "",
   educationLevel: null,
   academicData: {},
   interests: [],
@@ -41,50 +44,36 @@ const defaultState: CareerState = {
 
 const CareerContext = createContext<CareerContextType | null>(null);
 
-const STORAGE_KEY = "@career_wizard_state_v2";
-
 export function CareerProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<CareerState>(defaultState);
 
-  useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then((raw) => {
-        if (raw) {
-          const parsed = JSON.parse(raw) as CareerState;
-          setState({ ...defaultState, ...parsed });
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  function persist(next: CareerState) {
-    setState(next);
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {});
+  function setLanguage(lang: Language) {
+    setState((s) => ({ ...s, language: lang }));
   }
 
-  function setLanguage(lang: Language) {
-    persist({ ...state, language: lang });
+  function setProfile(name: string, age: string) {
+    setState((s) => ({ ...s, name, age }));
   }
 
   function setEducationLevel(level: EducationLevel) {
-    persist({ ...state, educationLevel: level, academicData: {}, interests: [] });
+    setState((s) => ({ ...s, educationLevel: level, academicData: {}, interests: [] }));
   }
 
   function setAcademicData(data: AcademicData) {
-    persist({ ...state, academicData: data });
+    setState((s) => ({ ...s, academicData: data }));
   }
 
   function setInterests(interests: string[]) {
-    persist({ ...state, interests });
+    setState((s) => ({ ...s, interests }));
   }
 
   function reset() {
-    persist({ ...defaultState, language: state.language });
+    setState((s) => ({ ...defaultState, language: s.language }));
   }
 
   return (
     <CareerContext.Provider
-      value={{ ...state, setLanguage, setEducationLevel, setAcademicData, setInterests, reset }}
+      value={{ ...state, setLanguage, setProfile, setEducationLevel, setAcademicData, setInterests, reset }}
     >
       {children}
     </CareerContext.Provider>

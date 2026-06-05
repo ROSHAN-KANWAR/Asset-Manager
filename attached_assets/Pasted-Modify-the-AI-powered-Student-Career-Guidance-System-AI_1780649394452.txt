@@ -1,0 +1,37 @@
+Modify the AI-powered Student Career Guidance System ("AI Career Coach") mobile app built with React Native and Expo. 
+
+IMPORTANT BUILD REQUIREMENT: Ensure the 'eas.json' file in the root directory remains correctly configured for local APK builds using the 'preview' profile with 'buildType: "apk"'. The app's package name must be "com.roshan.aicareercoach".
+
+Please update the application flow and implement the following features:
+
+1. NEW REGISTRATION SCREEN (PERSONALIZATION WITHOUT STORAGE):
+- Screen 1 (New): Before choosing the education level, ask the student to enter their "Name" and "Age" (via numbers-only input).
+- Display a small privacy note: "Your data is safe. This information is processed in real-time to personalize your roadmap and is not saved anywhere on any database or local storage."
+- Validate that the Name is not empty and Age is a valid number.
+
+2. DYNAMIC CONTENT & CONDITIONAL FLOW BASED ON AGE & EDUCATION:
+- Language Selector at the top: [English] / [हिंदी] (Instant translation).
+- Screen 2: Select education level chips: [10th Student], [12th Student], [Graduate].
+- Screen 3 (Conditional Form): 
+  * If 10th: Ask for 10th Marks (%) and favorite subjects.
+  * If 12th: Ask for 10th & 12th Marks (%), 12th Stream (Science, Commerce, Arts).
+  * If Graduate: Ask for Graduation Degree, Specialization, and CGPA.
+- Screen 4: Checklist for interests: [Tech & Coding], [Government Exams (SSC, Steno, High Court)], [Management], [Creative Arts].
+
+3. AGE-INTELLIGENT AI DASHBOARD:
+- Screen 5 (Dashboard): Pass the Student's Name, Age, Marks, and Interests to the Google Gemini/OpenAI API.
+- The AI must explicitly use the student's "Name" to address them personally in the greeting and roadmap summary.
+- CRITICAL AGE FACTOR: The AI must strictly evaluate the student's "Age" against real-world criteria (e.g., minimum and maximum age criteria for Government exams like SSC Steno, High Court clerk, or entry-level corporate jobs). If a student is under-age or over-age for a specific career path or exam, the AI should dynamically filter it out or add a warning note about eligibility.
+- Multi-language Output: If [हिंदी] is selected, the complete AI response, roadmaps, and greetings must be rendered in clean, professional Hindi text.
+
+4. AUTOMATED BUILD ASSISTANCE:
+- Maintain or recreate the 'eas.json' with this exact structure:
+  {
+    "cli": { "version": ">= 10.0.0" },
+    "build": {
+      "development": { "developmentClient": true, "distribution": "internal" },
+      "preview": { "distribution": "internal", "android": { "buildType": "apk" } },
+      "production": {}
+    }
+  }
+- Once code modification is done, guide me with the exact 'npx eas-cli@latest' commands to trigger the Android build via the Shell tab so I can download the final installable .apk file.
