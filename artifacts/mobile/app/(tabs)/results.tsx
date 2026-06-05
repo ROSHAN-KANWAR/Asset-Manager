@@ -212,7 +212,7 @@ export default function ResultsScreen() {
               <View style={s.summaryMeta}>
                 <View style={s.summaryTag}>
                   <Ionicons name="person-outline" size={11} color="rgba(255,255,255,0.7)" />
-                  <Text style={s.summaryTagText}>{name}{age ? `, ${age}` : ""}</Text>
+                  <Text style={s.summaryTagText}>{`${name}${age ? `, ${age}` : ""}`}</Text>
                 </View>
                 <View style={s.summaryTag}>
                   <Ionicons name="school-outline" size={11} color="rgba(255,255,255,0.7)" />
@@ -238,6 +238,8 @@ export default function ResultsScreen() {
               />
             ))}
 
+            <ToolsSection colors={colors} rt={rt} router={router} />
+
             <Pressable
               onPress={handleStartOver}
               style={({ pressed }) => [
@@ -251,6 +253,39 @@ export default function ResultsScreen() {
           </ScrollView>
         </Animated.View>
       )}
+    </View>
+  );
+}
+
+function ToolsSection({
+  colors, rt, router,
+}: {
+  colors: ReturnType<typeof useColors>;
+  rt: ReturnType<typeof useTranslations>["results"];
+  router: ReturnType<typeof useRouter>;
+}) {
+  return (
+    <View style={[s.toolsWrap, { borderColor: colors.border }]}>
+      <Text style={[s.toolsHeading, { color: colors.mutedForeground }]}>{rt.exploreMore}</Text>
+      {rt.tools.map((tool, i) => (
+        <Pressable
+          key={i}
+          onPress={() => { Haptics.selectionAsync(); router.push(tool.route as "/explore"); }}
+          style={({ pressed }) => [
+            s.toolCard,
+            { backgroundColor: colors.card, borderColor: colors.border, opacity: pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.97 : 1 }] },
+          ]}
+        >
+          <View style={[s.toolIcon, { backgroundColor: `${tool.color}18` }]}>
+            <Ionicons name={tool.icon as keyof typeof Ionicons.glyphMap} size={22} color={tool.color} />
+          </View>
+          <View style={s.toolText}>
+            <Text style={[s.toolTitle, { color: colors.text }]}>{tool.title}</Text>
+            <Text style={[s.toolDesc, { color: colors.mutedForeground }]}>{tool.desc}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.mutedForeground} />
+        </Pressable>
+      ))}
     </View>
   );
 }
@@ -316,4 +351,11 @@ const s = StyleSheet.create({
   startOverLinkText: { fontSize: 14, fontFamily: "Inter_400Regular" },
   startOverBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 14, paddingVertical: 14, borderWidth: 1.5, marginTop: 4 },
   startOverText: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
+  toolsWrap: { borderRadius: 16, borderWidth: 1, overflow: "hidden", marginTop: 4 },
+  toolsHeading: { fontSize: 11, fontFamily: "Inter_600SemiBold", letterSpacing: 1.1, paddingHorizontal: 14, paddingTop: 12, paddingBottom: 8 },
+  toolCard: { flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 14, paddingVertical: 14, borderTopWidth: 1, borderTopColor: "transparent" },
+  toolIcon: { width: 42, height: 42, borderRadius: 12, alignItems: "center", justifyContent: "center" },
+  toolText: { flex: 1, gap: 2 },
+  toolTitle: { fontSize: 15, fontFamily: "Inter_600SemiBold" },
+  toolDesc: { fontSize: 12, fontFamily: "Inter_400Regular" },
 });
