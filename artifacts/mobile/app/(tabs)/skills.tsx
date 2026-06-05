@@ -100,7 +100,7 @@ export default function SkillsScreen() {
               </View>
               <Text style={[s.categoryName, { color: colors.text }]}>{cat.category}</Text>
               <Text style={[s.catCount, { color: colors.mutedForeground }]}>
-                {cat.items.filter((item) => checked.has(item)).length}/{cat.items.length}
+                {`${cat.items.filter((item) => checked.has(item)).length}/${cat.items.length}`}
               </Text>
             </View>
             {cat.items.map((item, ii) => {

@@ -116,6 +116,25 @@ Return ONLY a valid JSON object — no markdown, no code fences. Structure:
 Be concrete: use real exam names, real job titles, real degrees. Each item 1-2 sentences max. Apply age eligibility analysis rigorously to every government exam or age-restricted career.${languageInstruction}`;
 }
 
+const MODEL_CHAIN = [
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+  "gemini-1.5-flash-8b",
+];
+
+function is503(err: unknown): boolean {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "status" in err &&
+    (err as { status: number }).status === 503
+  );
+}
+
+async function sleep(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
 careerRouter.post("/career/guidance", async (req, res) => {
   const { name, age, educationLevel, academicData, interests, language } = req.body as {
     name?: string;
@@ -137,42 +156,64 @@ careerRouter.post("/career/guidance", async (req, res) => {
     return;
   }
 
-  try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      generationConfig: {
-        responseMimeType: "application/json",
-        maxOutputTokens: 8192,
-      } as object,
-    });
+  const prompt = buildPrompt(
+    name ?? "Student",
+    age ?? "",
+    educationLevel,
+    academicData,
+    interests,
+    language ?? "en"
+  );
 
-    const prompt = buildPrompt(
-      name ?? "Student",
-      age ?? "",
-      educationLevel,
-      academicData,
-      interests,
-      language ?? "en"
-    );
+  const genAI = new GoogleGenerativeAI(apiKey);
+  let lastErr: unknown;
 
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+  for (const modelName of MODEL_CHAIN) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          generationConfig: {
+            responseMimeType: "application/json",
+            maxOutputTokens: 8192,
+          } as object,
+        });
 
-    let parsed: { summary: string; sections: { title: string; items: string[] }[] };
-    try {
-      parsed = JSON.parse(text) as typeof parsed;
-    } catch {
-      req.log.error({ text }, "Failed to parse AI response as JSON");
-      res.status(500).json({ error: "AI returned an unexpected response format. Please retry." });
-      return;
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+
+        let parsed: { summary: string; sections: { title: string; items: string[] }[] };
+        try {
+          parsed = JSON.parse(text) as typeof parsed;
+        } catch {
+          req.log.error({ text, modelName }, "Failed to parse AI response as JSON");
+          res.status(500).json({ error: "AI returned an unexpected response format. Please retry." });
+          return;
+        }
+
+        req.log.info({ modelName, attempt }, "Career guidance generated successfully");
+        res.json(parsed);
+        return;
+      } catch (err) {
+        lastErr = err;
+        req.log.warn({ err, modelName, attempt }, "AI model attempt failed");
+
+        if (is503(err) && attempt === 0) {
+          await sleep(1500);
+          continue;
+        }
+        break;
+      }
     }
 
-    res.json(parsed);
-  } catch (err) {
-    req.log.error({ err }, "Career guidance AI error");
-    res.status(500).json({ error: "Failed to generate career guidance. Please try again." });
+    if (!is503(lastErr)) break;
+    await sleep(1000);
   }
+
+  req.log.error({ err: lastErr }, "All AI model attempts failed");
+  res.status(500).json({
+    error: "AI service is temporarily busy. Please wait a moment and tap 'Try Again'.",
+  });
 });
 
 export default careerRouter;
